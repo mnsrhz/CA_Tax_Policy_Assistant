@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Secrets and local configuration
+.env
+.env.*
+.streamlit/secrets.toml
+
+# Streamlit and model caches
+.streamlit/cache/
+.cache/
+models/
+model_cache/
+
+# Generated artifacts
+artifacts/
+outputs/
+logs/
+*.log
+
+# Local vector/index artifacts
+chroma/
+faiss_index/
+*.index
+*.pkl
+
+# OS and editor files
+.DS_Store
+.vscode/
+.idea/
+

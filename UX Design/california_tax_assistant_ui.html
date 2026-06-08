@@ -1,0 +1,554 @@
+
+<style>
+:root {
+  --bg: #F7F6F2;
+  --surface: #FFFFFF;
+  --surface-2: #F1EFE8;
+  --border: rgba(0,0,0,0.08);
+  --border-md: rgba(0,0,0,0.13);
+  --text-primary: #1A1915;
+  --text-secondary: #5F5E5A;
+  --text-muted: #888780;
+  --accent: #185FA5;
+  --accent-bg: #E6F1FB;
+  --accent-text: #0C447C;
+  --gold: #854F0B;
+  --gold-bg: #FAEEDA;
+  --gold-text: #633806;
+  --success: #3B6D11;
+  --success-bg: #EAF3DE;
+  --success-text: #27500A;
+  --warn-bg: #FAEEDA;
+  --warn-text: #854F0B;
+  --radius: 12px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  height: 620px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  border: 0.5px solid var(--border-md);
+  overflow: hidden;
+  font-family: 'Georgia', serif;
+}
+
+.sidebar {
+  background: var(--surface);
+  border-right: 0.5px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 18px 16px 14px;
+  border-bottom: 0.5px solid var(--border);
+}
+
+.logo-mark {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 14px;
+}
+
+.logo-icon {
+  width: 30px;
+  height: 30px;
+  background: #185FA5;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+  font-style: normal;
+  font-family: 'Georgia', serif;
+  letter-spacing: -0.5px;
+}
+
+.logo-text {
+  font-size: 13px;
+  font-weight: normal;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+  font-family: 'Georgia', serif;
+}
+
+.logo-text span {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: system-ui, sans-serif;
+  letter-spacing: 0.03em;
+  margin-top: 1px;
+}
+
+.new-chat-btn {
+  width: 100%;
+  padding: 7px 10px;
+  background: var(--surface-2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: system-ui, sans-serif;
+}
+
+.sidebar-section {
+  padding: 12px 16px 6px;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: system-ui, sans-serif;
+}
+
+.chat-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 8px;
+}
+
+.chat-item {
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  line-height: 1.4;
+  font-family: system-ui, sans-serif;
+  margin-bottom: 1px;
+}
+
+.chat-item.active {
+  background: var(--accent-bg);
+  color: var(--accent-text);
+}
+
+.chat-item:hover:not(.active) {
+  background: var(--surface-2);
+}
+
+.chat-item-date {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.sidebar-footer {
+  padding: 12px 16px;
+  border-top: 0.5px solid var(--border);
+}
+
+.tax-year-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: var(--gold-bg);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--gold-text);
+  font-family: system-ui, sans-serif;
+}
+
+.tax-year-pill i { font-size: 13px; }
+
+.main {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.topbar {
+  background: var(--surface);
+  border-bottom: 0.5px solid var(--border);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.topbar-title {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-family: 'Georgia', serif;
+}
+
+.topbar-badges {
+  display: flex;
+  gap: 6px;
+}
+
+.badge {
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-family: system-ui, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.badge-blue { background: var(--accent-bg); color: var(--accent-text); }
+.badge-gold { background: var(--gold-bg); color: var(--gold-text); }
+.badge-green { background: var(--success-bg); color: var(--success-text); }
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.msg-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.msg-row.user { flex-direction: row-reverse; }
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-family: system-ui, sans-serif;
+}
+
+.avatar-assistant { background: #185FA5; color: white; font-size: 12px; }
+.avatar-user { background: var(--surface-2); color: var(--text-secondary); border: 0.5px solid var(--border); }
+
+.bubble {
+  max-width: 82%;
+  padding: 11px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  line-height: 1.65;
+  font-family: system-ui, sans-serif;
+  color: var(--text-primary);
+}
+
+.bubble-assistant {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-top-left-radius: 3px;
+}
+
+.bubble-user {
+  background: #185FA5;
+  color: white;
+  border-top-right-radius: 3px;
+}
+
+.bubble p { margin-bottom: 8px; }
+.bubble p:last-child { margin-bottom: 0; }
+
+.answer-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: system-ui, sans-serif;
+}
+
+.answer-header i { font-size: 13px; color: var(--accent); }
+
+.disclaimer {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: var(--warn-bg);
+  border-radius: var(--radius-sm);
+  border-left: 2px solid #BA7517;
+  font-size: 11px;
+  color: var(--warn-text);
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+.sources-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.source-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: var(--surface-2);
+  border: 0.5px solid var(--border);
+  border-radius: 999px;
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-family: system-ui, sans-serif;
+}
+
+.source-chip i { font-size: 11px; color: var(--accent); }
+
+.pipeline-trace {
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  margin-top: 8px;
+  border: 0.5px solid var(--border);
+}
+
+.pipeline-trace-title {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 6px;
+  font-family: system-ui, sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pipeline-steps {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.pipeline-step {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-family: system-ui, sans-serif;
+}
+
+.ps-done { background: var(--success-bg); color: var(--success-text); }
+.ps-arrow { color: var(--text-muted); font-size: 10px; }
+
+.input-area {
+  padding: 14px 20px;
+  background: var(--surface);
+  border-top: 0.5px solid var(--border);
+}
+
+.input-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  background: var(--bg);
+  border: 0.5px solid var(--border-md);
+  border-radius: var(--radius);
+  padding: 8px 10px 8px 14px;
+}
+
+.input-wrap textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  color: var(--text-primary);
+  resize: none;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  max-height: 80px;
+  padding: 0;
+}
+
+.input-wrap textarea::placeholder { color: var(--text-muted); }
+
+.send-btn {
+  width: 30px;
+  height: 30px;
+  background: #185FA5;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.send-btn i { font-size: 15px; }
+
+.suggested-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.sug-chip {
+  padding: 5px 10px;
+  background: var(--surface);
+  border: 0.5px solid var(--border-md);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: system-ui, sans-serif;
+}
+
+.sug-chip:hover { background: var(--accent-bg); color: var(--accent-text); border-color: #B5D4F4; }
+</style>
+
+<h2 class="sr-only">California Tax Policy Assistant UI mockup showing sidebar with chat history, main chat area with a sample Q&A exchange, pipeline trace, source citations, and suggested follow-up questions</h2>
+
+<div class="app-shell">
+
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-mark">
+        <div class="logo-icon">⚖</div>
+        <div class="logo-text">
+          CalTax Assistant
+          <span>Powered by RAG · 2024</span>
+        </div>
+      </div>
+      <button class="new-chat-btn">
+        <i class="ti ti-plus" aria-hidden="true"></i> New question
+      </button>
+    </div>
+
+    <div class="sidebar-section">Recent</div>
+
+    <div class="chat-list">
+      <div class="chat-item active">
+        Home office deduction for W-2...
+        <div class="chat-item-date">Today</div>
+      </div>
+      <div class="chat-item">
+        CA standard deduction 2024
+        <div class="chat-item-date">Yesterday</div>
+      </div>
+      <div class="chat-item">
+        FMLA leave — CA vs federal rules
+        <div class="chat-item-date">Jun 5</div>
+      </div>
+      <div class="chat-item">
+        Capital gains on home sale
+        <div class="chat-item-date">Jun 3</div>
+      </div>
+      <div class="chat-item">
+        Self-employed quarterly payments
+        <div class="chat-item-date">Jun 1</div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="tax-year-pill">
+        <i class="ti ti-calendar" aria-hidden="true"></i>
+        Tax year: 2024 · California
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title">Home office deduction for W-2 employees</div>
+      <div class="topbar-badges">
+        <span class="badge badge-blue">FTB</span>
+        <span class="badge badge-blue">IRS</span>
+        <span class="badge badge-gold">2024</span>
+        <span class="badge badge-green">3 sources</span>
+      </div>
+    </div>
+
+    <div class="messages">
+
+      <div class="msg-row user">
+        <div class="avatar avatar-user"><i class="ti ti-user" style="font-size:13px" aria-hidden="true"></i></div>
+        <div class="bubble bubble-user">
+          Can I deduct my home office expenses if I'm a W-2 employee working remotely in California?
+        </div>
+      </div>
+
+      <div class="msg-row">
+        <div class="avatar avatar-assistant">⚖</div>
+        <div class="bubble bubble-assistant">
+          <div class="answer-header">
+            <i class="ti ti-shield-check" aria-hidden="true"></i>
+            Answer based on 3 source documents · Tax year 2024
+          </div>
+
+          <p><strong>No</strong> — as a W-2 employee you cannot deduct home office expenses on either your federal or California state return for 2024.</p>
+
+          <p>Under the Tax Cuts and Jobs Act (TCJA), the federal deduction for unreimbursed employee business expenses — including home office — was suspended through 2025. California <em>conforms</em> to this federal change for W-2 employees, meaning the suspension applies on your CA Form 540 as well.</p>
+
+          <p>The home office deduction remains available only if you are <strong>self-employed</strong> and report income on Schedule C, or if you have net earnings from a partnership or S-corporation shown on Schedule E.</p>
+
+          <div class="disclaimer">
+            <i class="ti ti-alert-triangle" style="font-size:12px;vertical-align:-1px;margin-right:4px" aria-hidden="true"></i>
+            For informational purposes only. Not a substitute for advice from a licensed California tax professional.
+          </div>
+
+          <div class="pipeline-trace">
+            <div class="pipeline-trace-title">
+              <i class="ti ti-route" style="font-size:11px" aria-hidden="true"></i>
+              Retrieval trace
+            </div>
+            <div class="pipeline-steps">
+              <span class="pipeline-step ps-done"><i class="ti ti-filter" style="font-size:10px" aria-hidden="true"></i> Pre-filter 2024</span>
+              <span class="ps-arrow">→</span>
+              <span class="pipeline-step ps-done"><i class="ti ti-search" style="font-size:10px" aria-hidden="true"></i> BM25 · 18 hits</span>
+              <span class="ps-arrow">→</span>
+              <span class="pipeline-step ps-done"><i class="ti ti-vector" style="font-size:10px" aria-hidden="true"></i> Vector · 20 hits</span>
+              <span class="ps-arrow">→</span>
+              <span class="pipeline-step ps-done"><i class="ti ti-arrows-sort" style="font-size:10px" aria-hidden="true"></i> RRF · 22 merged</span>
+              <span class="ps-arrow">→</span>
+              <span class="pipeline-step ps-done"><i class="ti ti-stars" style="font-size:10px" aria-hidden="true"></i> Reranked · top 5</span>
+            </div>
+          </div>
+
+          <div class="sources-row">
+            <span class="source-chip"><i class="ti ti-file-text" aria-hidden="true"></i> IRS Pub 587 · p.4</span>
+            <span class="source-chip"><i class="ti ti-file-text" aria-hidden="true"></i> CA Schedule CA Instructions · p.12</span>
+            <span class="source-chip"><i class="ti ti-file-text" aria-hidden="true"></i> IRS Pub 529 · p.8</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="input-area">
+      <div class="suggested-chips">
+        <div class="sug-chip">What if I'm self-employed?</div>
+        <div class="sug-chip">Does CA differ from federal here?</div>
+        <div class="sug-chip">Can my employer reimburse me?</div>
+      </div>
+      <div class="input-wrap">
+        <textarea rows="1" placeholder="Ask a California tax question…"></textarea>
+        <button class="send-btn" aria-label="Send message">
+          <i class="ti ti-arrow-up" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
