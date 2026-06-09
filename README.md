@@ -90,13 +90,23 @@ pip install -r requirements.txt
 
 For local Streamlit runs, create `.streamlit/secrets.toml` or export environment variables before running the app.
 
-Example `.streamlit/secrets.toml`:
+Start from the example file:
+
+```bash
+cp .streamlit/secrets.example.toml .streamlit/secrets.toml
+```
+
+Then edit `.streamlit/secrets.toml` with your real values:
 
 ```toml
 OPENAI_API_KEY = "..."
 PINECONE_API_KEY = "..."
 PINECONE_INDEX_NAME = "..."
+PINECONE_CLOUD = "aws"
+PINECONE_REGION = "us-east-1"
 ```
+
+The real `.streamlit/secrets.toml` file is ignored by git and should not be committed.
 
 Environment variable alternative:
 
@@ -104,6 +114,8 @@ Environment variable alternative:
 export OPENAI_API_KEY="..."
 export PINECONE_API_KEY="..."
 export PINECONE_INDEX_NAME="..."
+export PINECONE_CLOUD="aws"
+export PINECONE_REGION="us-east-1"
 ```
 
 ## Run Tests

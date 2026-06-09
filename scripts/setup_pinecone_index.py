@@ -23,7 +23,7 @@ def required_pinecone_values(config: AppConfig) -> list[str]:
 
 
 def setup_pinecone_index() -> None:
-    config = AppConfig.from_env()
+    config = AppConfig.from_local_secrets_or_env()
     missing = required_pinecone_values(config)
     if missing:
         raise RuntimeError(f"Missing required configuration values: {', '.join(missing)}")

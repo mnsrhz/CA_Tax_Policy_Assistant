@@ -29,7 +29,7 @@ def required_indexing_values(config: AppConfig) -> list[str]:
 
 
 def index_corpus(corpus_dir: Path = Path("Data Corpus")) -> None:
-    config = AppConfig.from_env()
+    config = AppConfig.from_local_secrets_or_env()
     missing = required_indexing_values(config)
     if missing:
         raise RuntimeError(f"Missing required configuration values: {', '.join(missing)}")

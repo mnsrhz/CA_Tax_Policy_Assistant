@@ -3,6 +3,12 @@ from __future__ import annotations
 import os
 from collections.abc import Mapping
 from dataclasses import dataclass
+from pathlib import Path
+
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import tomli as tomllib
 
 
 @dataclass(frozen=True)
@@ -14,6 +20,8 @@ class AppConfig:
     pinecone_region: str = "us-east-1"
     embedding_model_name: str = "BAAI/bge-small-en-v1.5"
     reranker_model_name: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+
+    DEFAULT_SECRETS_PATH = Path(".streamlit/secrets.toml")
 
     @classmethod
     def from_env(cls) -> "AppConfig":
@@ -37,6 +45,20 @@ class AppConfig:
             return cls.from_mapping(secrets) if secrets else cls.from_env()
         except Exception:
             return cls.from_env()
+
+    @classmethod
+    def from_secrets_file(cls, path: Path | str) -> "AppConfig":
+        secrets_path = Path(path)
+        with secrets_path.open("rb") as handle:
+            values = tomllib.load(handle)
+        return cls.from_mapping(values)
+
+    @classmethod
+    def from_local_secrets_or_env(cls, path: Path | str | None = None) -> "AppConfig":
+        secrets_path = Path(path) if path is not None else cls.DEFAULT_SECRETS_PATH
+        if secrets_path.exists():
+            return cls.from_secrets_file(secrets_path)
+        return cls.from_env()
 
     def missing_required_values(self) -> list[str]:
         missing: list[str] = []

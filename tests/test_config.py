@@ -64,3 +64,36 @@ def test_config_falls_back_to_env_when_secrets_raise(monkeypatch):
     assert config.openai_api_key == "openai-env"
     assert config.pinecone_api_key == "pinecone-env"
     assert config.pinecone_index_name == "env-index"
+
+
+def test_config_reads_local_streamlit_secrets_file(tmp_path):
+    secrets_file = tmp_path / "secrets.toml"
+    secrets_file.write_text(
+        """
+OPENAI_API_KEY = "openai-file"
+PINECONE_API_KEY = "pinecone-file"
+PINECONE_INDEX_NAME = "file-index"
+PINECONE_CLOUD = "aws"
+PINECONE_REGION = "us-west-2"
+""",
+        encoding="utf-8",
+    )
+
+    config = AppConfig.from_secrets_file(secrets_file)
+
+    assert config.openai_api_key == "openai-file"
+    assert config.pinecone_api_key == "pinecone-file"
+    assert config.pinecone_index_name == "file-index"
+    assert config.pinecone_region == "us-west-2"
+
+
+def test_config_falls_back_to_env_when_local_secrets_file_missing(monkeypatch, tmp_path):
+    monkeypatch.setenv("OPENAI_API_KEY", "openai-env")
+    monkeypatch.setenv("PINECONE_API_KEY", "pinecone-env")
+    monkeypatch.setenv("PINECONE_INDEX_NAME", "env-index")
+
+    config = AppConfig.from_local_secrets_or_env(tmp_path / "missing.toml")
+
+    assert config.openai_api_key == "openai-env"
+    assert config.pinecone_api_key == "pinecone-env"
+    assert config.pinecone_index_name == "env-index"
