@@ -155,13 +155,16 @@ def retrieval_trace_html(
     source_count: int,
 ) -> str:
     stages = {str(item.get("stage", "")) for item in trace}
+    final_stage = trace[-1] if trace else {}
     step_labels = [
         f"Pre-filter {tax_year}",
         f"Filter {jurisdiction}",
-        "Vector search",
+        f"Vector · {int(final_stage.get('vector_hits', 0))} hits",
+        f"BM25 · {int(final_stage.get('bm25_hits', 0))} hits",
     ]
     if "fallback" in stages:
         step_labels.append("Fallback widened")
+    step_labels.append(f"Merged · {int(final_stage.get('merged_candidates', 0))} candidates")
     step_labels.append(f"Reranked top {source_count}")
 
     steps: list[str] = []

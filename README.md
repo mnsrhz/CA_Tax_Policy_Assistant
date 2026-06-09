@@ -17,6 +17,7 @@ docs/superpowers/specs/2026-06-08-ca-tax-policy-assistant-design.md
 - Streamlit for the web app
 - Streamlit Community Cloud for public GitHub-backed deployment
 - Pinecone for vector search
+- Local BM25 for exact keyword retrieval
 - PyMuPDF for PDF extraction
 - Structure-aware semantic chunking for tax/legal documents
 - `BAAI/bge-small-en-v1.5` for local/free embeddings
@@ -43,7 +44,8 @@ PDFs
   -> semantic chunking with metadata
   -> local embeddings
   -> Pinecone upsert
-  -> filtered vector retrieval
+  -> filtered vector retrieval + local BM25 retrieval
+  -> merge and deduplicate candidates
   -> local reranking
   -> OpenAI answer generation
   -> cited Streamlit response
@@ -138,6 +140,14 @@ Run the indexing script locally after the Pinecone index exists:
 
 ```bash
 python scripts/index_corpus.py
+```
+
+This also rebuilds the local BM25 index at `data/bm25_index.json`.
+
+If you only need to refresh BM25 after changing local PDFs and do not want to call Pinecone, run:
+
+```bash
+python scripts/build_bm25_index.py
 ```
 
 The deployed Streamlit app should not re-index the PDFs on normal startup.

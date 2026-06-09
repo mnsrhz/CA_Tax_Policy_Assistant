@@ -79,7 +79,9 @@ def test_retrieval_trace_html_formats_pipeline_steps():
     assert "ct-pipeline-title" in html
     assert "Pre-filter 2024" in html
     assert "Filter California" in html
-    assert "Vector search" in html
+    assert "Vector · 0 hits" in html
+    assert "BM25 · 0 hits" in html
+    assert "Merged · 0 candidates" in html
     assert "Reranked top 5" in html
     assert "Fallback widened" not in html
 
@@ -93,3 +95,16 @@ def test_retrieval_trace_html_includes_fallback_step_when_present():
     )
 
     assert "Fallback widened" in html
+
+
+def test_retrieval_trace_html_includes_retrieval_counts():
+    html = retrieval_trace_html(
+        trace=[{"stage": "strict", "vector_hits": 12, "bm25_hits": 8, "merged_candidates": 15}],
+        tax_year="2024",
+        jurisdiction="Both",
+        source_count=6,
+    )
+
+    assert "Vector · 12 hits" in html
+    assert "BM25 · 8 hits" in html
+    assert "Merged · 15 candidates" in html

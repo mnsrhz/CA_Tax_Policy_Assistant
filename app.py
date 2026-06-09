@@ -4,13 +4,14 @@ from html import escape
 
 import streamlit as st
 
+from src.bm25 import DEFAULT_BM25_INDEX_PATH, load_bm25_index
 from src.config import AppConfig
 from src.embeddings import embed_texts
 from src.generation import generate_answer
 from src.models import RetrievalFilters
 from src.pinecone_store import PineconeStore
 from src.reranking import rerank
-from src.retrieval import retrieve_with_fallback
+from src.retrieval import retrieve_hybrid_with_fallback
 from src.ui import app_css, badge_html, retrieval_trace_html, source_chip_html
 
 
@@ -22,10 +23,9 @@ def get_store(api_key: str, index_name: str) -> PineconeStore:
     return PineconeStore(api_key=api_key, index_name=index_name)
 
 
-def _match_metadata(match) -> dict[str, object]:
-    if hasattr(match, "metadata"):
-        return dict(match.metadata)
-    return dict(match.get("metadata", {}))
+@st.cache_resource
+def get_bm25_index():
+    return load_bm25_index(DEFAULT_BM25_INDEX_PATH)
 
 
 def main() -> None:
@@ -76,9 +76,9 @@ def main() -> None:
 
     query_vector = embed_texts([question], model_name=config.embedding_model_name, is_query=True)[0]
     store = get_store(config.pinecone_api_key, config.pinecone_index_name)
-    matches, trace = retrieve_with_fallback(store, query_vector, filters)
+    bm25_index = get_bm25_index()
+    candidates, trace = retrieve_hybrid_with_fallback(store, query_vector, question, filters, bm25_index)
 
-    candidates = [_match_metadata(match) for match in matches]
     top_contexts = rerank(question, candidates, model_name=config.reranker_model_name)
     answer = generate_answer(config.openai_api_key, question, top_contexts)
 
