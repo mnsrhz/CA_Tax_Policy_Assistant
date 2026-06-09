@@ -27,7 +27,7 @@ def _match_metadata(match) -> dict[str, object]:
 
 
 def main() -> None:
-    config = AppConfig.from_env()
+    config = AppConfig.from_mapping(st.secrets) if st.secrets else AppConfig.from_env()
     st.title("CalTax Assistant")
     st.caption("Educational RAG assistant for California and federal tax documents.")
 

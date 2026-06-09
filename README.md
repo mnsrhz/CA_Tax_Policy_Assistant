@@ -70,9 +70,11 @@ Expected secrets:
 OPENAI_API_KEY
 PINECONE_API_KEY
 PINECONE_INDEX_NAME
+PINECONE_CLOUD
+PINECONE_REGION
 ```
 
-Additional Pinecone settings may be added during implementation, such as cloud and region values.
+`PINECONE_CLOUD` defaults to `aws` and `PINECONE_REGION` defaults to `us-east-1` when omitted.
 
 ## Setup
 
@@ -112,7 +114,15 @@ pytest -v
 
 ## Indexing The Corpus
 
-Run the indexing script locally after Pinecone secrets are configured:
+Create the Pinecone index before indexing the corpus:
+
+```bash
+python scripts/setup_pinecone_index.py
+```
+
+The index is created as a serverless cosine index with `384` dimensions for `BAAI/bge-small-en-v1.5`.
+
+Run the indexing script locally after the Pinecone index exists:
 
 ```bash
 python scripts/index_corpus.py

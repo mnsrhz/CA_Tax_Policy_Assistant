@@ -7,6 +7,27 @@ from pinecone import Pinecone
 from src.models import DocumentChunk
 
 
+BGE_SMALL_DIMENSION = 384
+
+
+def ensure_pinecone_index(
+    client,
+    index_name: str,
+    cloud: str = "aws",
+    region: str = "us-east-1",
+    dimension: int = BGE_SMALL_DIMENSION,
+    metric: str = "cosine",
+) -> None:
+    if client.has_index(index_name):
+        return
+    client.create_index(
+        name=index_name,
+        dimension=dimension,
+        metric=metric,
+        spec={"serverless": {"cloud": cloud, "region": region}},
+    )
+
+
 def vectors_for_chunks(chunks: list[DocumentChunk], embeddings: list[list[float]]) -> list[dict[str, object]]:
     return [
         {
