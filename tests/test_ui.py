@@ -16,10 +16,15 @@ def test_app_css_returns_style_block_with_required_classes():
         ".stApp",
         ".ct-header",
         ".ct-title",
+        ".ct-subtitle",
+        ".ct-badges",
+        ".ct-badge",
         ".ct-badge-blue",
         ".ct-badge-gold",
         ".ct-badge-green",
         ".ct-answer",
+        ".ct-disclaimer",
+        ".ct-source-row",
         ".ct-source-chip",
     ]:
         assert class_name in css
