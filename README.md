@@ -164,6 +164,12 @@ If secrets are missing, the app displays a setup warning instead of calling Pine
 
 Deploy through Streamlit Community Cloud from the GitHub repository. Streamlit Cloud should run `app.py` and use configured secrets for OpenAI and Pinecone access.
 
+Detailed deployment steps are in:
+
+```text
+docs/deployment.md
+```
+
 ## Safety Notice
 
 This project is for educational use. Generated responses should be treated as informational only and not as a substitute for advice from a licensed tax professional.
