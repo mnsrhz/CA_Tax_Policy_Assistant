@@ -3,6 +3,19 @@ from __future__ import annotations
 from openai import OpenAI
 
 
+def build_answer_brief(question: str) -> str:
+    return f"""For this question: {question}
+
+Shape the answer as:
+- Start with one direct conclusion sentence.
+- Use 3-5 bullets maximum.
+- Keep it roughly 180 words unless the user asks for detail.
+- For rule claims, cite source document and page.
+- Separate IRS/federal guidance from California/FTB guidance when both appear.
+- If the retrieved context is weak, say the loaded documents do not provide enough support.
+- End with one short informational disclaimer."""
+
+
 def build_answer_prompt(question: str, contexts: list[dict[str, object]]) -> str:
     context_blocks = []
     for index, context in enumerate(contexts, start=1):
@@ -21,6 +34,9 @@ Do not invent thresholds, deadlines, forms, or eligibility rules. Include a brie
 
 Question:
 {question}
+
+Answer brief:
+{build_answer_brief(question)}
 
 Retrieved context:
 {joined_context}

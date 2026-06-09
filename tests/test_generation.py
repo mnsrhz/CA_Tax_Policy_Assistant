@@ -1,4 +1,13 @@
-from src.generation import build_answer_prompt
+from src.generation import build_answer_brief, build_answer_prompt
+
+
+def test_build_answer_brief_requests_sharp_cited_answer():
+    brief = build_answer_brief("Can I deduct home office expenses?")
+
+    assert "3-5 bullets" in brief
+    assert "180 words" in brief
+    assert "cite" in brief.lower()
+    assert "Can I deduct home office expenses?" in brief
 
 
 def test_build_answer_prompt_includes_citation_rules_and_context():
