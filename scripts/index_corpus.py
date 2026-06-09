@@ -19,9 +19,18 @@ def discover_pdfs(corpus_dir: Path) -> list[Path]:
     return sorted(corpus_dir.glob("*.pdf"))
 
 
+def required_indexing_values(config: AppConfig) -> list[str]:
+    missing: list[str] = []
+    if not config.pinecone_api_key:
+        missing.append("PINECONE_API_KEY")
+    if not config.pinecone_index_name:
+        missing.append("PINECONE_INDEX_NAME")
+    return missing
+
+
 def index_corpus(corpus_dir: Path = Path("Data Corpus")) -> None:
     config = AppConfig.from_env()
-    missing = config.missing_required_values()
+    missing = required_indexing_values(config)
     if missing:
         raise RuntimeError(f"Missing required configuration values: {', '.join(missing)}")
 
