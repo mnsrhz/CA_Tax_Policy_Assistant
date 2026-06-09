@@ -11,7 +11,7 @@ from src.models import RetrievalFilters
 from src.pinecone_store import PineconeStore
 from src.reranking import rerank
 from src.retrieval import retrieve_with_fallback
-from src.ui import app_css, badge_html, retrieval_trace_summary, source_chip_html
+from src.ui import app_css, badge_html, retrieval_trace_html, source_chip_html
 
 
 st.set_page_config(page_title="CalTax Assistant", page_icon="⚖", layout="wide")
@@ -99,8 +99,16 @@ def main() -> None:
         )
         source_chips = "".join(source_chip_html(context) for context in top_contexts)
         st.markdown(f'<div class="ct-source-row">{source_chips}</div>', unsafe_allow_html=True)
-        with st.expander("Retrieval trace"):
-            st.caption(retrieval_trace_summary(trace, len(top_contexts)))
+        st.markdown(
+            retrieval_trace_html(
+                trace=trace,
+                tax_year=tax_year,
+                jurisdiction=str(jurisdiction),
+                source_count=len(top_contexts),
+            ),
+            unsafe_allow_html=True,
+        )
+        with st.expander("Raw trace"):
             st.json(trace)
 
 

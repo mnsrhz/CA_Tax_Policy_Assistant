@@ -1,4 +1,4 @@
-from src.ui import app_css, badge_html, retrieval_trace_summary, source_chip_html, source_label
+from src.ui import app_css, badge_html, retrieval_trace_html, retrieval_trace_summary, source_chip_html, source_label
 
 
 def test_source_label_formats_document_page():
@@ -65,3 +65,31 @@ def test_retrieval_trace_summary_includes_stage_count():
     summary = retrieval_trace_summary([{"stage": "strict"}, {"stage": "fallback"}], source_count=5)
 
     assert summary == "2 retrieval stages · 5 source chunks"
+
+
+def test_retrieval_trace_html_formats_pipeline_steps():
+    html = retrieval_trace_html(
+        trace=[{"stage": "strict"}],
+        tax_year="2024",
+        jurisdiction="California",
+        source_count=5,
+    )
+
+    assert "ct-pipeline-trace" in html
+    assert "ct-pipeline-title" in html
+    assert "Pre-filter 2024" in html
+    assert "Filter California" in html
+    assert "Vector search" in html
+    assert "Reranked top 5" in html
+    assert "Fallback widened" not in html
+
+
+def test_retrieval_trace_html_includes_fallback_step_when_present():
+    html = retrieval_trace_html(
+        trace=[{"stage": "strict"}, {"stage": "fallback"}],
+        tax_year="All",
+        jurisdiction="Both",
+        source_count=3,
+    )
+
+    assert "Fallback widened" in html

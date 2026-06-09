@@ -81,6 +81,48 @@ def app_css() -> str:
     line-height: 1;
     padding: 0.35rem 0.6rem;
 }
+
+.ct-pipeline-trace {
+    background: #F1EFE8;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 8px;
+    margin-top: 0.6rem;
+    padding: 0.6rem 0.7rem;
+}
+
+.ct-pipeline-title {
+    color: #888780;
+    font-family: system-ui, sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+}
+
+.ct-pipeline-steps {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.ct-pipeline-step {
+    align-items: center;
+    background: #EAF3DE;
+    border-radius: 999px;
+    color: #27500A;
+    display: inline-flex;
+    font-family: system-ui, sans-serif;
+    font-size: 0.72rem;
+    line-height: 1;
+    padding: 0.25rem 0.55rem;
+}
+
+.ct-pipeline-arrow {
+    color: #888780;
+    font-size: 0.72rem;
+}
 </style>
 """.strip()
 
@@ -104,3 +146,33 @@ def source_chip_html(metadata: dict[str, object]) -> str:
 
 def retrieval_trace_summary(trace: list[dict[str, object]], source_count: int) -> str:
     return f"{len(trace)} retrieval stages · {source_count} source chunks"
+
+
+def retrieval_trace_html(
+    trace: list[dict[str, object]],
+    tax_year: str,
+    jurisdiction: str,
+    source_count: int,
+) -> str:
+    stages = {str(item.get("stage", "")) for item in trace}
+    step_labels = [
+        f"Pre-filter {tax_year}",
+        f"Filter {jurisdiction}",
+        "Vector search",
+    ]
+    if "fallback" in stages:
+        step_labels.append("Fallback widened")
+    step_labels.append(f"Reranked top {source_count}")
+
+    steps: list[str] = []
+    for index, label in enumerate(step_labels):
+        if index:
+            steps.append('<span class="ct-pipeline-arrow">→</span>')
+        steps.append(f'<span class="ct-pipeline-step">{escape(label, quote=True)}</span>')
+
+    return (
+        '<div class="ct-pipeline-trace">'
+        '<div class="ct-pipeline-title">Retrieval trace</div>'
+        f'<div class="ct-pipeline-steps">{"".join(steps)}</div>'
+        "</div>"
+    )

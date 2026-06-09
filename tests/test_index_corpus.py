@@ -20,10 +20,11 @@ def test_required_indexing_values_allows_missing_openai_key():
     assert required_indexing_values(config) == []
 
 
-def test_index_corpus_script_runs_directly_to_configuration_check():
+def test_index_corpus_script_runs_directly_to_configuration_check(tmp_path):
+    repo_root = Path(__file__).resolve().parents[1]
     result = subprocess.run(
-        [sys.executable, "scripts/index_corpus.py"],
-        cwd=Path(__file__).resolve().parents[1],
+        [sys.executable, str(repo_root / "scripts/index_corpus.py")],
+        cwd=tmp_path,
         env={},
         capture_output=True,
         text=True,
