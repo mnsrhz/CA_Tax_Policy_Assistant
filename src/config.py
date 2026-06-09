@@ -31,6 +31,13 @@ class AppConfig:
             reranker_model_name=values.get("RERANKER_MODEL_NAME", cls.reranker_model_name),
         )
 
+    @classmethod
+    def from_streamlit_secrets_or_env(cls, secrets) -> "AppConfig":
+        try:
+            return cls.from_mapping(secrets) if secrets else cls.from_env()
+        except Exception:
+            return cls.from_env()
+
     def missing_required_values(self) -> list[str]:
         missing: list[str] = []
         if not self.openai_api_key:

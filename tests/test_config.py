@@ -48,3 +48,19 @@ def test_config_reads_mapping_values_for_streamlit_secrets():
     assert config.pinecone_region == "us-central1"
     assert config.embedding_model_name == "custom-embedding"
     assert config.reranker_model_name == "custom-reranker"
+
+
+def test_config_falls_back_to_env_when_secrets_raise(monkeypatch):
+    class MissingSecrets:
+        def __bool__(self):
+            raise FileNotFoundError("No secrets found")
+
+    monkeypatch.setenv("OPENAI_API_KEY", "openai-env")
+    monkeypatch.setenv("PINECONE_API_KEY", "pinecone-env")
+    monkeypatch.setenv("PINECONE_INDEX_NAME", "env-index")
+
+    config = AppConfig.from_streamlit_secrets_or_env(MissingSecrets())
+
+    assert config.openai_api_key == "openai-env"
+    assert config.pinecone_api_key == "pinecone-env"
+    assert config.pinecone_index_name == "env-index"
