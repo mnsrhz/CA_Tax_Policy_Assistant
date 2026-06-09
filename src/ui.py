@@ -3,6 +3,8 @@ from __future__ import annotations
 from html import escape
 import re
 
+from src.metadata import human_readable_title
+
 
 def app_css() -> str:
     return """
@@ -184,7 +186,7 @@ def badge_html(text: str, color: str = "blue") -> str:
 
 
 def source_label(metadata: dict[str, object]) -> str:
-    title = metadata.get("source_title", metadata.get("source_file", "Unknown source"))
+    title = human_readable_title(metadata)
     page = metadata.get("page_number", "?")
     return f"{title} · p.{page}"
 

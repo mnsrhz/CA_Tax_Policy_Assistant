@@ -26,6 +26,7 @@ class DocumentChunk:
     document_type: str
     form_or_pub_number: str
     section_heading: str = ""
+    display_title: str = ""
     topic_tags: list[str] = field(default_factory=list)
 
     def to_pinecone_metadata(self) -> dict[str, object]:
@@ -34,6 +35,7 @@ class DocumentChunk:
             "text": self.text,
             "source_file": self.source_file,
             "source_title": self.source_title,
+            "display_title": self.display_title or self.source_title,
             "page_number": self.page_number,
             "tax_year": self.tax_year,
             "jurisdiction": self.jurisdiction,

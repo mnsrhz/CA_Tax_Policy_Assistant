@@ -51,6 +51,8 @@ def merge_retrieval_candidates(vector_matches: list[object], bm25_matches: list[
             merged[chunk_id]["retrieval_method"] = "vector+bm25"
             if "bm25_score" in metadata:
                 merged[chunk_id]["bm25_score"] = metadata["bm25_score"]
+            if metadata.get("display_title") and not merged[chunk_id].get("display_title"):
+                merged[chunk_id]["display_title"] = metadata["display_title"]
         else:
             metadata["retrieval_method"] = metadata.get("retrieval_method", "bm25")
             merged[chunk_id] = metadata

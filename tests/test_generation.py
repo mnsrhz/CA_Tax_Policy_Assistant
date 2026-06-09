@@ -16,7 +16,8 @@ def test_build_answer_prompt_includes_citation_rules_and_context():
         contexts=[
             {
                 "text": "W-2 employees cannot deduct unreimbursed employee expenses.",
-                "source_title": "IRS Publication 529",
+                "display_title": "IRS Publication 529: Miscellaneous Deductions",
+                "source_title": "p529",
                 "page_number": 8,
                 "agency": "IRS",
             }
@@ -24,7 +25,7 @@ def test_build_answer_prompt_includes_citation_rules_and_context():
     )
 
     assert "answer only from the retrieved context" in prompt.lower()
-    assert "IRS Publication 529, page 8" in prompt
+    assert "IRS Publication 529: Miscellaneous Deductions, page 8" in prompt
     assert "untrusted user question" in prompt.lower()
     assert "<user_question>" in prompt
     assert "</user_question>" in prompt

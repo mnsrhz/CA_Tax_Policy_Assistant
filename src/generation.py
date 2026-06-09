@@ -4,6 +4,8 @@ from html import escape
 
 from openai import OpenAI
 
+from src.metadata import human_readable_title
+
 
 def build_answer_brief(question: str) -> str:
     safe_question = escape(question)
@@ -27,7 +29,7 @@ Shape the answer as:
 def build_answer_prompt(question: str, contexts: list[dict[str, object]]) -> str:
     context_blocks = []
     for index, context in enumerate(contexts, start=1):
-        source_title = context.get("source_title", context.get("source_file", "Unknown source"))
+        source_title = human_readable_title(context)
         page_number = context.get("page_number", "unknown")
         agency = context.get("agency", "unknown")
         text = escape(str(context.get("text", "")))

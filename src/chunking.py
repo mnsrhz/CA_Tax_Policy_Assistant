@@ -35,6 +35,7 @@ def chunk_pages(
                     text=chunk_text,
                     source_file=page.source_file,
                     source_title=metadata["source_title"],
+                    display_title=metadata.get("display_title", metadata["source_title"]),
                     page_number=page.page_number,
                     tax_year=metadata["tax_year"],
                     jurisdiction=metadata["jurisdiction"],
