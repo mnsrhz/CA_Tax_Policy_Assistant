@@ -4,7 +4,7 @@ A Streamlit-based tax assistant that uses retrieval augmented generation over a 
 
 ## Project Status
 
-Design approved. Implementation is planned but not yet built.
+Initial implementation is available on the feature branch. The app can run locally, and the indexing script is ready to use once Pinecone and OpenAI secrets are configured.
 
 The current design spec is here:
 
@@ -12,7 +12,7 @@ The current design spec is here:
 docs/superpowers/specs/2026-06-08-ca-tax-policy-assistant-design.md
 ```
 
-## Planned Tech Stack
+## Tech Stack
 
 - Streamlit for the web app
 - Streamlit Community Cloud for public GitHub-backed deployment
@@ -26,12 +26,16 @@ docs/superpowers/specs/2026-06-08-ca-tax-policy-assistant-design.md
 ## Repository Contents
 
 ```text
+app.py            Streamlit app entry point
 Data Corpus/      Tax PDFs used as the RAG corpus
+scripts/          Offline corpus indexing script
+src/              RAG pipeline modules
+tests/            Pytest test suite
 UX Design/        HTML mockup for the intended assistant UI
 docs/             Design documentation and implementation specs
 ```
 
-## Planned RAG Flow
+## RAG Flow
 
 ```text
 PDFs
@@ -70,20 +74,45 @@ PINECONE_INDEX_NAME
 
 Additional Pinecone settings may be added during implementation, such as cloud and region values.
 
-## Local Development
+## Setup
 
-Implementation steps will be added once the app skeleton is created. The expected commands will look like:
+Create and activate a virtual environment, then install dependencies:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-streamlit run app.py
+```
+
+## Local Secrets
+
+For local Streamlit runs, create `.streamlit/secrets.toml` or export environment variables before running the app.
+
+Example `.streamlit/secrets.toml`:
+
+```toml
+OPENAI_API_KEY = "..."
+PINECONE_API_KEY = "..."
+PINECONE_INDEX_NAME = "..."
+```
+
+Environment variable alternative:
+
+```bash
+export OPENAI_API_KEY="..."
+export PINECONE_API_KEY="..."
+export PINECONE_INDEX_NAME="..."
+```
+
+## Run Tests
+
+```bash
+pytest -v
 ```
 
 ## Indexing The Corpus
 
-Corpus indexing will be handled by a local script once implementation begins:
+Run the indexing script locally after Pinecone secrets are configured:
 
 ```bash
 python scripts/index_corpus.py
@@ -91,11 +120,18 @@ python scripts/index_corpus.py
 
 The deployed Streamlit app should not re-index the PDFs on normal startup.
 
+## Run The App
+
+```bash
+streamlit run app.py
+```
+
+If secrets are missing, the app displays a setup warning instead of calling Pinecone or OpenAI.
+
 ## Deployment
 
-The app will be deployed through Streamlit Community Cloud from the GitHub repository. Streamlit Cloud will run `app.py` and use configured secrets for OpenAI and Pinecone access.
+Deploy through Streamlit Community Cloud from the GitHub repository. Streamlit Cloud should run `app.py` and use configured secrets for OpenAI and Pinecone access.
 
 ## Safety Notice
 
 This project is for educational use. Generated responses should be treated as informational only and not as a substitute for advice from a licensed tax professional.
-
