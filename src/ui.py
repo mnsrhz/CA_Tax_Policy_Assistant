@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from html import escape
+
 
 def app_css() -> str:
     return """
@@ -84,7 +86,9 @@ def app_css() -> str:
 
 
 def badge_html(text: str, color: str = "blue") -> str:
-    return f'<span class="ct-badge ct-badge-{color}">{text}</span>'
+    safe_color = color if color in {"blue", "gold", "green"} else "blue"
+    safe_text = escape(str(text), quote=True)
+    return f'<span class="ct-badge ct-badge-{safe_color}">{safe_text}</span>'
 
 
 def source_label(metadata: dict[str, object]) -> str:
@@ -94,7 +98,8 @@ def source_label(metadata: dict[str, object]) -> str:
 
 
 def source_chip_html(metadata: dict[str, object]) -> str:
-    return f'<span class="ct-source-chip">{source_label(metadata)}</span>'
+    label = escape(source_label(metadata), quote=True)
+    return f'<span class="ct-source-chip">{label}</span>'
 
 
 def retrieval_trace_summary(trace: list[dict[str, object]], source_count: int) -> str:
