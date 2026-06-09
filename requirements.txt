@@ -1,0 +1,9 @@
+streamlit
+pymupdf
+sentence-transformers
+pinecone
+openai
+pytest
+python-dotenv
+numpy
+
