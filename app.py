@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from html import escape
-
 import streamlit as st
 
 from src.bm25 import DEFAULT_BM25_INDEX_PATH, load_bm25_index
@@ -12,7 +10,7 @@ from src.models import RetrievalFilters
 from src.pinecone_store import PineconeStore
 from src.reranking import rerank
 from src.retrieval import retrieve_hybrid_with_fallback
-from src.ui import app_css, badge_html, retrieval_trace_html, source_chip_html
+from src.ui import answer_card_html, app_css, badge_html, retrieval_trace_html, source_chip_html
 
 
 st.set_page_config(page_title="CalTax Assistant", page_icon="⚖", layout="wide")
@@ -74,13 +72,14 @@ def main() -> None:
         agencies=agency_map.get(source_scope, []),
     )
 
-    query_vector = embed_texts([question], model_name=config.embedding_model_name, is_query=True)[0]
-    store = get_store(config.pinecone_api_key, config.pinecone_index_name)
-    bm25_index = get_bm25_index()
-    candidates, trace = retrieve_hybrid_with_fallback(store, query_vector, question, filters, bm25_index)
+    with st.spinner("Retrieving sources, reranking, and drafting answer..."):
+        query_vector = embed_texts([question], model_name=config.embedding_model_name, is_query=True)[0]
+        store = get_store(config.pinecone_api_key, config.pinecone_index_name)
+        bm25_index = get_bm25_index()
+        candidates, trace = retrieve_hybrid_with_fallback(store, query_vector, question, filters, bm25_index)
 
-    top_contexts = rerank(question, candidates, model_name=config.reranker_model_name)
-    answer = generate_answer(config.openai_api_key, question, top_contexts)
+        top_contexts = rerank(question, candidates, model_name=config.reranker_model_name)
+        answer = generate_answer(config.openai_api_key, question, top_contexts)
 
     badges = [
         badge_html(f"Tax year: {tax_year}", "gold"),
@@ -90,13 +89,7 @@ def main() -> None:
     st.markdown(f'<div class="ct-badges">{"".join(badges)}</div>', unsafe_allow_html=True)
 
     with st.chat_message("assistant"):
-        safe_answer = escape(answer, quote=True).replace("\n", "<br>")
-        st.markdown(f'<div class="ct-answer">{safe_answer}</div>', unsafe_allow_html=True)
-        st.markdown(
-            '<p class="ct-disclaimer">For informational purposes only. '
-            "Not a substitute for advice from a licensed tax professional.</p>",
-            unsafe_allow_html=True,
-        )
+        st.markdown(answer_card_html(answer, len(top_contexts), tax_year), unsafe_allow_html=True)
         source_chips = "".join(source_chip_html(context) for context in top_contexts)
         st.markdown(f'<div class="ct-source-row">{source_chips}</div>', unsafe_allow_html=True)
         st.markdown(
@@ -108,8 +101,6 @@ def main() -> None:
             ),
             unsafe_allow_html=True,
         )
-        with st.expander("Raw trace"):
-            st.json(trace)
 
 
 if __name__ == "__main__":

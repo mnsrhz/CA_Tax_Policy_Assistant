@@ -1,4 +1,13 @@
-from src.ui import app_css, badge_html, retrieval_trace_html, retrieval_trace_summary, source_chip_html, source_label
+from src.ui import (
+    answer_card_html,
+    app_css,
+    badge_html,
+    format_answer_html,
+    retrieval_trace_html,
+    retrieval_trace_summary,
+    source_chip_html,
+    source_label,
+)
 
 
 def test_source_label_formats_document_page():
@@ -23,6 +32,8 @@ def test_app_css_returns_style_block_with_required_classes():
         ".ct-badge-gold",
         ".ct-badge-green",
         ".ct-answer",
+        ".ct-answer-card",
+        ".ct-answer-header",
         ".ct-disclaimer",
         ".ct-source-row",
         ".ct-source-chip",
@@ -59,6 +70,29 @@ def test_source_chip_html_escapes_html_sensitive_source_label():
 
     assert "<b>" not in chip
     assert "&lt;b&gt;IRS Publication 587&lt;/b&gt; · p.4" in chip
+
+
+def test_format_answer_html_renders_basic_markdown_safely():
+    html = format_answer_html("**No** — not deductible.\n\n- Federal rule (IRS Pub 529, p.8)\n- California follows it.")
+
+    assert "<strong>No</strong>" in html
+    assert "<ul>" in html
+    assert "<li>Federal rule (IRS Pub 529, p.8)</li>" in html
+    assert "<script>" not in format_answer_html("<script>alert('x')</script>")
+
+
+def test_answer_card_html_includes_mockup_style_header_and_disclaimer():
+    html = answer_card_html(
+        answer="**No** — not deductible.",
+        source_count=3,
+        tax_year="2024",
+    )
+
+    assert "ct-answer-card" in html
+    assert "ct-answer-header" in html
+    assert "Answer based on 3 source documents · Tax year 2024" in html
+    assert "<strong>No</strong>" in html
+    assert "ct-disclaimer" in html
 
 
 def test_retrieval_trace_summary_includes_stage_count():

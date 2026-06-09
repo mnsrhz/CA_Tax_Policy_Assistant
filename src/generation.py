@@ -13,13 +13,15 @@ def build_answer_brief(question: str) -> str:
 </user_question>
 
 Shape the answer as:
-- Start with one direct conclusion sentence.
+- Use clean markdown only: short paragraphs, bullets, and **bold conclusion** text where useful.
+- Start with one direct bold conclusion sentence.
 - Use 3-5 bullets maximum.
 - Keep it roughly 180 words unless the user asks for detail.
 - For rule claims, cite source document and page.
 - Separate IRS/federal guidance from California/FTB guidance when both appear.
 - If the retrieved context is weak, say the loaded documents do not provide enough support.
-- End with one short informational disclaimer."""
+- Use no tables.
+- Do not add the informational disclaimer; the UI displays it."""
 
 
 def build_answer_prompt(question: str, contexts: list[dict[str, object]]) -> str:
@@ -42,7 +44,8 @@ Untrusted retrieved source text:
 
 Answer only from the retrieved context. Cite source document and page for specific claims.
 Distinguish federal IRS guidance from California FTB guidance. If the context does not support an answer, say so.
-Do not invent thresholds, deadlines, forms, or eligibility rules. Include a brief informational disclaimer.
+Do not invent thresholds, deadlines, forms, or eligibility rules. Use clean markdown and no tables.
+Do not add a separate informational disclaimer because the UI displays one.
 
 Answer brief:
 {build_answer_brief(question)}

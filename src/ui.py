@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from html import escape
+import re
 
 
 def app_css() -> str:
@@ -60,9 +61,58 @@ def app_css() -> str:
     line-height: 1.6;
 }
 
-.ct-disclaimer {
+.ct-answer-card {
+    background: #FFFFFF;
+    border: 1px solid #D8D1C4;
+    border-radius: 8px;
+    border-top-left-radius: 3px;
+    color: #1A1915;
+    line-height: 1.62;
+    margin-bottom: 0.7rem;
+    padding: 0.85rem 0.95rem;
+}
+
+.ct-answer-header {
+    align-items: center;
     color: #6A6258;
-    font-size: 0.88rem;
+    display: flex;
+    font-family: system-ui, sans-serif;
+    font-size: 0.78rem;
+    gap: 0.35rem;
+    margin-bottom: 0.55rem;
+}
+
+.ct-answer-body {
+    font-family: system-ui, sans-serif;
+    font-size: 0.95rem;
+}
+
+.ct-answer-body p {
+    margin: 0 0 0.65rem;
+}
+
+.ct-answer-body p:last-child {
+    margin-bottom: 0;
+}
+
+.ct-answer-body ul {
+    margin: 0.25rem 0 0.65rem 1.15rem;
+    padding: 0;
+}
+
+.ct-answer-body li {
+    margin-bottom: 0.35rem;
+}
+
+.ct-disclaimer {
+    background: #FFF4D6;
+    border-left: 2px solid #BA7517;
+    border-radius: 5px;
+    color: #6A4A12;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    margin-top: 0.7rem;
+    padding: 0.5rem 0.65rem;
 }
 
 .ct-source-row {
@@ -142,6 +192,48 @@ def source_label(metadata: dict[str, object]) -> str:
 def source_chip_html(metadata: dict[str, object]) -> str:
     label = escape(source_label(metadata), quote=True)
     return f'<span class="ct-source-chip">{label}</span>'
+
+
+def _inline_markdown_html(text: str) -> str:
+    safe_text = escape(text, quote=True)
+    return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", safe_text)
+
+
+def format_answer_html(answer: str) -> str:
+    blocks: list[str] = []
+    bullet_items: list[str] = []
+
+    def flush_bullets() -> None:
+        if bullet_items:
+            blocks.append(f"<ul>{''.join(bullet_items)}</ul>")
+            bullet_items.clear()
+
+    for raw_line in str(answer).splitlines():
+        line = raw_line.strip()
+        if not line:
+            flush_bullets()
+            continue
+        if line.startswith(("- ", "* ")):
+            bullet_items.append(f"<li>{_inline_markdown_html(line[2:].strip())}</li>")
+            continue
+        flush_bullets()
+        blocks.append(f"<p>{_inline_markdown_html(line)}</p>")
+    flush_bullets()
+    return "".join(blocks)
+
+
+def answer_card_html(answer: str, source_count: int, tax_year: str) -> str:
+    source_word = "source document" if source_count == 1 else "source documents"
+    safe_tax_year = escape(str(tax_year), quote=True)
+    return (
+        '<div class="ct-answer-card">'
+        '<div class="ct-answer-header">Answer based on '
+        f"{source_count} {source_word} · Tax year {safe_tax_year}</div>"
+        f'<div class="ct-answer-body">{format_answer_html(answer)}</div>'
+        '<div class="ct-disclaimer">For informational purposes only. '
+        "Not a substitute for advice from a licensed tax professional.</div>"
+        "</div>"
+    )
 
 
 def retrieval_trace_summary(trace: list[dict[str, object]], source_count: int) -> str:

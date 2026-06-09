@@ -36,3 +36,11 @@ def test_build_answer_prompt_includes_citation_rules_and_context():
     assert "180 words" in prompt
     assert "loaded documents do not provide enough support" in prompt
     assert "informational disclaimer" in prompt
+
+
+def test_build_answer_brief_requests_clean_markdown_format():
+    brief = build_answer_brief("What is the California standard deduction?")
+
+    assert "clean markdown" in brief.lower()
+    assert "bold conclusion" in brief.lower()
+    assert "no tables" in brief.lower()
